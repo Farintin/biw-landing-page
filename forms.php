@@ -11,7 +11,7 @@
 
 
   try {
-        $my_email_addr = '';
+        $my_email_address = '';
         $json_msg = array('sql_insert' => '', 'mail_delivery' => '', 'error' => '');
         
         
@@ -32,7 +32,7 @@
         $mail->SMTPSecure = 'tls';
          
         /* SMTP authentication username. */
-        $mail->Username = $my_email_addr;
+        $mail->Username = $my_email_address;
          
         /* SMTP authentication password. */
         $mail->Password = '';
