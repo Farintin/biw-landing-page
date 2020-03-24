@@ -13,7 +13,7 @@ $(window).on('load', function () {
       	$(this).hide();
 
     });
-    newsLetterModal.delay(10000).fadeIn(1000);
+    newsLetterModal.delay(3000).fadeIn(1000);
     
   }
   
@@ -40,7 +40,15 @@ $('.close-btn').click(function () {
 });
 
 
+newsLetterModal.click(function (e) {
 
+  if (e.target == this) {
+
+   $(this).hide()
+
+  }
+
+});
 newsLetterModal.find('.close-btn').click(function () {
 
 	newsLetterModal.fadeOut(500)

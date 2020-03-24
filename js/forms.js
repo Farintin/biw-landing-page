@@ -107,12 +107,23 @@ jQuery(document).ready(function($) {
       let str = activeForm.serialize();
       let action = activeForm.attr('action');
 
+      function activeFormLoaderRemover () {
 
-      if( ! action ) {
+        activeFormLoader.delay(100).fadeOut('slow', function () {
+
+          $(this).removeClass('bg-white-40p');
+          $(this).addClass('bg-white-10p');
+          $(this).hide();
+            
+        });
+  
+      };
+
+      if(!action) {
 
         action = 'forms.php';
 
-      }
+      };
 
       $.ajax({
 
@@ -123,59 +134,85 @@ jQuery(document).ready(function($) {
 
           activeFormLoader.delay(200).fadeIn('slow', function () {
 
-            activeFormLoader.removeClass('bg-white-10p');
-            activeFormLoader.addClass('bg-white-40p');
+            $(this).removeClass('bg-white-10p');
+            $(this).addClass('bg-white-40p');
             $(this).show();
-            
+              
           });
-  
+
         },
         success: function(jsonMsg) {
+          if (jsonMsg[0] != '{') {
 
-          jsonMsg = JSON.parse(jsonMsg);
-
-          activeFormLoader.delay(200).fadeOut('slow', function () {
-
-            activeFormLoader.removeClass('bg-white-40p');
-            activeFormLoader.addClass('bg-white-10p');
-            $(this).hide();
-
-          });
-      
-          if (jsonMsg.mail_delivery == true) {
-
+            console.log('Not a json:\n', jsonMsg);
+            activeFormLoaderRemover();
             let formTitle = '#'.concat(activeForm.find('input[type="hidden"]').val());
-            $(formTitle).fadeIn(500);
-            if (formTitle == '#newsletter') {
+            if (formTitle == '#masterclass') {
 
+              $(formTitle).find('.bottom').html("<p>You are just one step away from joining our masterclasses. "
+              + "We'll be in touch will you for the second registration. " + 
+              "A connection error occured in our mail server, please we'll send you an e-mail message later, thank you.</p>");
+
+            } else if (formTitle == '#event') {
+
+              $(formTitle).find('.bottom').html(`<p>Thank's for writing to us your message. 
+                We will try to be responsive as possible. A connection error occured in our mail server, 
+                Our team will get back to you with answer to your message later, thank you.</p>`);
+
+            } else if (formTitle == '#newsletter') {
+
+              $(formTitle).find('.bottom').html(`<p>Thank's for subscribing to our newsletter you will be recieving events info and news feeds on all around our industry.</p>
+                <p>A connection error occured in our mail server, please we'll send you an e-mail message later, thank you.</p>`);
               $('#modalNewsletterForm').fadeOut(200)
 
             };
-
-            activeForm.find("input, textarea").each((i, e) => {
-             
-              if (!(($(e).attr('type') == 'submit') | ($(e).attr('type') == 'hidden'))) {
-
-                $(e).val('');
-
-              }
-
-            });
-            console.log(jsonMsg.sql_insert);
-
-          } else if (jsonMsg.error == 'Fill in completely the forms') {
-
-            console.log(jsonMsg.error);
+            $(formTitle).fadeIn(500);
 
           } else {
-            
-            console.log(msg);
-          };
+            console.log('A json:\n', jsonMsg);
+
+            jsonMsg = JSON.parse(jsonMsg);
+            activeFormLoaderRemover();
+        
+            if (jsonMsg.mail_delivery == true) {
+
+              let formTitle = '#'.concat(activeForm.find('input[type="hidden"]').val());
+              $(formTitle).fadeIn(500);
+              if (formTitle == '#newsletter') {
+
+                $('#modalNewsletterForm').fadeOut(200)
+
+              };
+
+              // Empty form fields after submission
+              activeForm.find("input, textarea").each((i, e) => {
+               
+                if (!(($(e).attr('type') == 'submit') | ($(e).attr('type') == 'hidden'))) {
+
+                  $(e).val('');
+
+                }
+
+              });
+              console.log(jsonMsg.sql_insert);
+
+            } else if (jsonMsg.error == 'Fill in completely the forms') {
+
+              //console.log('do nothing');
+
+            } else {
+              
+              //console.log('do nothing');
+
+            }
+
+          }
 
         },
         error: function() {
 
           activeFormLoader.hide();
+          //console.log('do nothing');
 
         }
 
