@@ -13,7 +13,7 @@ $(window).on('load', function () {
       	$(this).hide();
 
     });
-    newsLetterModal.delay(3000).fadeIn(1000);
+    newsLetterModal.delay(30000).fadeIn(1000);
     
   }
   
