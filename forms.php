@@ -1,4 +1,5 @@
 <?php
+  //header('Content-type: application/json');
   use PHPMailer\PHPMailer\PHPMailer;
   use PHPMailer\PHPMailer\Exception;
 
@@ -14,8 +15,9 @@
   $dotenv->load();
 
 
-  $my_email_addr = getenv('EMAIL2');
-  $json_msg = array('sql_insert' => '', 'mail_delivery' => '', 'error' => '');
+  $my_email_addr = getenv('EMAIL');
+  $json_msg = array();
+
         
 
   $mail = new PHPMailer(TRUE);
@@ -25,9 +27,6 @@
 
   /* Tells PHPMailer to use SMTP. */
   $mail->isSMTP();
-
-  /* SMTP timeout value */
-  $mail->Timeout = 10;
          
   /* SMTP server address. */
   $mail->Host = 'smtp.gmail.com';
@@ -42,66 +41,130 @@
   $mail->Username = $my_email_addr;
          
   /* SMTP authentication password. */
-  $mail->Password = getenv('EMAIL2_PASSWORD');
+  $mail->Password = getenv('EMAIL_PASSWORD');
          
   /* Set the SMTP port. */
   $mail->Port = 587;
   
+
+
   try {
         if (isset($_POST['action'])) {
 
-          $action = $_POST['action'];
-          $conn = new mysqli('localhost', 'root', '', 'biw-landing-page');
+          if (getenv('DB_TECHNOLOGY') == 'mysql') {
 
+            if (getenv('ENVIRONMENT') == 'development') {
+                      
+              $conn = new mysqli('localhost', 'root', '', 'biw-landing-page');
+
+            } elseif (getenv('ENVIRONMENT') == 'production') {
+              
+              $conn = new mysqli(getenv('MYSQL_HOST'), getenv('MYSQL_USERNAME'), getenv('MYSQL_PASSWORD'), getenv('MYSQL_DB_NAME'));
+
+            };
+
+          } elseif (getenv('DB_TECHNOLOGY') == 'postgresql') {
+                    
+            if (getenv('ENVIRONMENT') == 'development') {
+              
+              //echo $password;
+              $conn = pg_connect('host=localhost dbname=biw-landing-page user=postgres password=' .getenv('PGSQL_PASSWORD')) or die("Could not connect");
+              echo "Connected successfully";
+
+            } elseif (getenv('ENVIRONMENT') == 'production') {
+              
+              $conn = pg_connect(getenv("DATABASE_URL")) or die("Could not connect");
+
+            };
+            $conn_stat = pg_connection_status($conn);
+
+          };
+
+
+
+          $action = $_POST['action'];
           if ($action == 'masterclass') {
 
-            $name = $conn->real_escape_string($_POST['name']);
-            $by = $email = $conn->real_escape_string($_POST['email']);
-            $addr = $conn->real_escape_string($_POST['address']);
-            $phone = $conn->real_escape_string($_POST['phone']);
+            if ($_POST['name'] & $_POST['email'] & $_POST['address'] & $_POST['phone']) {
 
-            if ($name & $email & $addr & $phone) {
+              if (getenv('DB_TECHNOLOGY') == 'mysql') {
 
-              if ($conn->connect_error) {
+                $name = $conn->real_escape_string($_POST['name']);
+                $by = $email = $conn->real_escape_string($_POST['email']);
+                $addr = $conn->real_escape_string($_POST['address']);
+                $phone = $conn->real_escape_string($_POST['phone']);
 
-                die('Connection failed: ' .$conn->connect_error. '<br>');
+                if ($conn->connect_error) {
+
+                  die('Connection failed: ' .$conn->connect_error. '<br>');
+
+                } else {
+
+                  $sql_insert = 'INSERT INTO masterclass (name, email, address, phone) VALUES ("' .$name. '", "' .$email. '", "' .$addr. '", "' .$phone. '")';
+
+                  if ($conn->query($sql_insert) === TRUE) {
+                    
+                    $json_msg['sql_insert'] = TRUE;
+
+                  } else {
+
+                    $json_msg['sql_insert'] = FALSE;
+                    $json_msg['error'] = $sql_insert .'<br>'. $conn->error .'<br>';
+
+                  };
+                  $conn->close();
+
+                };
+
+              } elseif (getenv('DB_TECHNOLOGY') == 'postgresql') {
+                
+                $name = pg_escape_string($_POST['name']);
+                $by = $email = pg_escape_string($_POST['email']);
+                $addr = pg_escape_string($_POST['address']);
+                $phone = pg_escape_string($_POST['phone']);
+
+                if ($conn_stat === PGSQL_CONNECTION_OK) {
+
+                  echo ' PGSQL_CONNECTION_OK ';
+                  $sql_insert = 'INSERT INTO masterclass (name, email, address, phone) VALUES (\'' .$name. '\', \'' .$email. '\', \'' .$addr. '\', \'' .$phone. '\')';
+                  $result = pg_query($sql_insert);
+                  if (!$result) {
+                      
+                    $json_msg['sql_insert'] = FALSE;
+                    $json_msg['error'] = $sql_insert .' <br>Connection status ok<br> ';
+                    echo " An error occurred.\n ";
+                    exit;
+
+                  } else {
+
+                    $json_msg['sql_insert'] = TRUE;
+
+                  };
+                  pg_close($conn);
+
+                } else {
+
+                  die('Connection status bad');
+
+                };
+
+              };
+              
+              $mail->setFrom($my_email_addr, 'biwmodels.com masterclass registration form');
+              $mail->addAddress($by, $name);
+              $mail->addAddress($my_email_addr, 'Farintin Obialor');
+              $mail->Subject = 'Masterclass Submission';
+              $mail->Body = 'By: '. $by .'
+        '.'Name: '. $name .', Address: '. $addr .', phone: '. $phone;
+
+              /* Finally send the mail. */
+              if ($mail->send()) {
+
+                $json_msg['mail_delivery'] = TRUE;
 
               } else {
 
-                $sql_insert = 'INSERT INTO masterclass (name, email, address, phone) VALUES ("' .$name. '", "' .$email. '", "' .$addr. '", "' .$phone. '")';
-
-                if ($conn->query($sql_insert)) {
-                  
-                  //echo "OK";
-                  $json_msg['sql_insert'] = TRUE;
-
-                } else {
-
-                  $json_msg['sql_insert'] = FALSE;
-                  $json_msg['error'] = $sql_insert .'<br>'. $conn->error .'<br>';
-
-                };
-                $conn->close();
-
-                
-
-                $mail->setFrom($my_email_addr, 'biwmodels.com masterclass registration form');
-                $mail->addAddress($by, $name);
-                $mail->addAddress($my_email_addr, 'Farintin Obialor');
-                $mail->Subject = 'Masterclass Submission';
-                $mail->Body = 'By: '. $by .'
-        '.'Name: '. $name .', Address: '. $addr .', phone: '. $phone;
-
-                /* Finally send the mail. */
-                if ($mail->send()) {
-
-                  $json_msg['mail_delivery'] = TRUE;
-
-                } else {
-
-                  $json_msg['mail_delivery'] = FALSE;
-
-                };
+                $json_msg['mail_delivery'] = FALSE;
 
               };
 
@@ -113,59 +176,89 @@
 
           } elseif ($action == 'event') {
 
-            $name = $conn->real_escape_string($_POST['name']);
-            $by = $email = $conn->real_escape_string($_POST['email']);
-            $phone = $conn->real_escape_string($_POST['phone']);
-            $msg = $conn->real_escape_string($_POST['message']);
+            if ($_POST['name'] & $_POST['email'] & $_POST['phone'] & $_POST['message']) {
 
-            if ($name & $by & $phone & $msg) {
+              if (getenv('DB_TECHNOLOGY') == 'mysql') {
 
-              //$conn = new mysqli('localhost', 'root', '', 'biw-landing-page');
-              if ($conn->connect_error) {
+                $name = $conn->real_escape_string($_POST['name']);
+                $by = $email = $conn->real_escape_string($_POST['email']);
+                $phone = $conn->real_escape_string($_POST['phone']);
+                $msg = $conn->real_escape_string($_POST['message']);
 
-                die('Connection failed: '. $conn->connect_error .'<br>');
+                if ($conn->connect_error) {
 
-              } else {
-
-                $sql_insert = 'INSERT INTO event (name, email, phone, message) VALUES ("' .$name. '", "' .$email. '", "' .$phone. '", "' .$msg. '")';
-
-                if ($conn->query($sql_insert)) {
-                  
-                  //echo "OK";
-                  $json_msg['sql_insert'] = TRUE;
+                  die('Connection failed: ' .$conn->connect_error. '<br>');
 
                 } else {
 
-                  //echo "Error: " .$sql_insert. '<br>' .$conn->error. '<br>';
-                  $json_msg['sql_insert'] = FALSE;
-                  $json_msg['error'] = $sql_insert .'<br>'. $conn->error .'<br>';
+                  $sql_insert = 'INSERT INTO event (name, email, phone, message) VALUES ("' .$name. '", "' .$email. '", "' .$phone. '", "' .$msg. '")';
+
+                  if ($conn->query($sql_insert) === TRUE) {
+                    
+                    $json_msg['sql_insert'] = TRUE;
+
+                  } else {
+
+                    $json_msg['sql_insert'] = FALSE;
+                    $json_msg['error'] = $sql_insert .'<br>'. $conn->error .'<br>';
+
+                  };
+                  $conn->close();
 
                 };
-                $conn->close();
 
+              } elseif (getenv('DB_TECHNOLOGY') == 'postgresql') {
+                
+                $name = pg_escape_string($_POST['name']);
+                $by = $email = pg_escape_string($_POST['email']);
+                $phone = pg_escape_string($_POST['phone']);
+                $msg = pg_escape_string($_POST['message']);
 
+                if ($conn_stat === PGSQL_CONNECTION_OK) {
 
-                $mail->setFrom($my_email_addr, 'biwmodels.com event question form');
-                $mail->addAddress($by, $name);
-                $mail->addAddress($my_email_addr, 'Farintin Obialor');
-                $mail->Subject = 'Events Submission';
-                $mail->Body = 'By: '. $by .'
+                  echo ' PGSQL_CONNECTION_OK ';
+                  $sql_insert = 'INSERT INTO event (name, email, phone, message) VALUES (\'' .$name. '\', \'' .$email. '\', \'' .$phone. '\', \'' .$msg. '\')';
+                  $result = pg_query($sql_insert);
+                  if (!$result) {
+                      
+                    $json_msg['sql_insert'] = FALSE;
+                    $json_msg['error'] = $sql_insert .' <br>Connection status ok<br> ';
+                    echo " An error occurred.\n ";
+                    exit;
+
+                  } else {
+
+                    $json_msg['sql_insert'] = TRUE;
+
+                  };
+                  pg_close($conn);
+
+                } else {
+
+                  die('Connection status bad');
+
+                };
+
+              };
+              
+              $mail->setFrom($my_email_addr, 'biwmodels.com event question form');
+              $mail->addAddress($by, $name);
+              $mail->addAddress($my_email_addr, 'Farintin Obialor');
+              $mail->Subject = 'Events Submission';
+              $mail->Body = 'By: '. $by .'
         '.'Name: '. $name .', phone: '. $phone .'
 
             '
             . $msg;
 
+              /* Finally send the mail. */
+              if ($mail->send()) {
 
-                /* Finally send the mail. */
-                if ($mail->send()) {
+                $json_msg['mail_delivery'] = TRUE;
 
-                  $json_msg['mail_delivery'] = TRUE;
+              } else {
 
-                } else {
-
-                  $json_msg['mail_delivery'] = FALSE;
-
-                };
+                $json_msg['mail_delivery'] = FALSE;
 
               };
 
@@ -177,51 +270,79 @@
 
           } elseif ($action == 'newsletter') {
 
-            $by = $email = $conn->real_escape_string($_POST['email']);
+            if ($_POST['email']) {
 
-            if ($email) {
+              if (getenv('DB_TECHNOLOGY') == 'mysql') {
 
-              //$conn = new mysqli('localhost', 'root', '', 'biw-landing-page');
-              if ($conn->connect_error) {
+                $by = $email = $conn->real_escape_string($_POST['email']);
 
-                die('Connection failed: ' .$conn->connect_error. '<br>');
+                if ($conn->connect_error) {
+
+                  die('Connection failed: ' .$conn->connect_error. '<br>');
+
+                } else {
+
+                  $sql_insert = 'INSERT INTO newsletter (email) VALUES ("' .$email. '")';
+
+                  if ($conn->query($sql_insert) === TRUE) {
+                    
+                    $json_msg['sql_insert'] = TRUE;
+
+                  } else {
+
+                    $json_msg['sql_insert'] = FALSE;
+                    $json_msg['error'] = $sql_insert .'<br>'. $conn->error .'<br>';
+
+                  };
+                  $conn->close();
+
+                };
+
+              } elseif (getenv('DB_TECHNOLOGY') == 'postgresql') {
+                
+                $by = $email = pg_escape_string($_POST['email']);
+
+                if ($conn_stat === PGSQL_CONNECTION_OK) {
+
+                  echo ' PGSQL_CONNECTION_OK ';
+                  $sql_insert = 'INSERT INTO newsletter (email) VALUES (\'' .$email. '\')';
+                  $result = pg_query($sql_insert);
+                  if (!$result) {
+                      
+                    $json_msg['sql_insert'] = FALSE;
+                    $json_msg['error'] = $sql_insert .' <br>Connection status ok<br> ';
+                    echo " An error occurred.\n ";
+                    exit;
+
+                  } else {
+
+                    $json_msg['sql_insert'] = TRUE;
+
+                  };
+                  pg_close($conn);
+
+                } else {
+
+                  die('Connection status bad');
+
+                };
+
+              };
+              
+              $mail->setFrom($my_email_addr, 'biwmodels.com newsletter form sign up');
+              $mail->addAddress($by, 'Subscriber');
+              $mail->addAddress($my_email_addr, 'Farintin Obialor');
+              $mail->Subject = 'Newsletter SignUp';
+              $mail->Body = 'By: '. $by;
+
+              /* Finally send the mail. */
+              if ($mail->send()) {
+
+                $json_msg['mail_delivery'] = TRUE;
 
               } else {
 
-                $sql_insert = 'INSERT INTO newsletter (email) VALUES ("' .$email. '")';
-
-                if ($conn->query($sql_insert) === TRUE) {
-                  
-                  //echo "OK";
-                  $json_msg['sql_insert'] = TRUE;
-
-                } else {
-
-                  //echo "Error: " .$sql_insert. '<br>' .$conn->error. '<br>';
-                  $json_msg['sql_insert'] = FALSE;
-                  $json_msg['error'] = $sql_insert .'<br>'. $conn->error .'<br>';
-
-                };
-                $conn->close();
-
-
-                $mail->setFrom($my_email_addr, 'biwmodels.com newsletter form sign up');
-                $mail->addAddress($by, 'Subscriber');
-                $mail->addAddress($my_email_addr, 'Farintin Obialor');
-                $mail->Subject = 'Newsletter SignUp';
-                $mail->Body = 'By: '. $by;
-
-                /* Finally send the mail. */
-                //$mail->send()
-                if ($mail->send()) {
-
-                  $json_msg['mail_delivery'] = TRUE;
-
-                } else {
-
-                  $json_msg['mail_delivery'] = FALSE;
-
-                };
+                $json_msg['mail_delivery'] = FALSE;
 
               };
 
@@ -233,23 +354,27 @@
 
           } else {
 
-            $json_msg['error'] = 'Unknown form request';
+              $json_msg['error'] = 'Unknown form request';
 
           };
 
-          echo json_encode($json_msg);
-      
         };
 
   } catch (Exception $e) {
 
-     $err_array = $mail->getSMTPInstance()->getError();
+     //$err_array = $mail->getSMTPInstance()->getError();
      //echo '<br>1<br>'.$err_array['smtp_code'];
+     $json_msg['error'] = $e->errorMessage();
 
   } catch (\Exception $e) {
 
      //echo $e->getCode().'<br>'.$e->getMessage().'<br>2<br>';
+     $json_msg['error'] = $e->getMessage();
 
-  }
+  };
+
+  $fp = fopen('msg.json', 'w') or die("Unable to open file!");
+  fwrite($fp, json_encode($json_msg));
+  fclose($fp);
 
 ?>
