@@ -268,7 +268,7 @@ jQuery(document).ready(function($) {
 
             $(formTitle).find('.bottom').html("<p>You are just one step away from joining our masterclasses. "
             + "We'll be in touch will you for the second registration. " + 
-            "A connection error occured in our mail server, please we'll send you an e-mail message later, thank you.</p>");
+            "A connection error occured in our mail server, we'll send you an e-mail message later, thank you.</p>");
 
           } else if (formTitle == '#event') {
 
@@ -279,7 +279,7 @@ jQuery(document).ready(function($) {
           } else if (formTitle == '#newsletter') {
 
             $(formTitle).find('.bottom').html(`<p>Thank's for subscribing to our newsletter you will be recieving events info and news feeds on all around our industry.</p>
-              <p>A connection error occured in our mail server, please we'll send you an e-mail message later, thank you.</p>`);
+              <p>A connection error occured in our mail server, we'll send you an e-mail message later, thank you.</p>`);
             $('#modalNewsletterForm').fadeOut(200)
 
           };
