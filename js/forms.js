@@ -274,7 +274,7 @@ jQuery(document).ready(function($) {
 
             $(formTitle).find('.bottom').html(`<p>Thank's for writing to us your message. 
               We will try to be responsive as possible. A connection error occured in our mail server, 
-              Our team will get back to you with answer to your message later, thank you.</p>`);
+              Our team will get back to you with an answer to your message later, thank you.</p>`);
 
           } else if (formTitle == '#newsletter') {
 

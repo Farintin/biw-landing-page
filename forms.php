@@ -154,8 +154,10 @@
               $mail->addAddress($by, $name);
               $mail->addAddress($my_email_addr, 'Farintin Obialor');
               $mail->Subject = 'Masterclass Submission';
-              $mail->Body = 'By: '. $by .'
-        '.'Name: '. $name .', Address: '. $addr .', phone: '. $phone;
+              $mail->Body = 'By Email: '. $by .'
+'.'Name: '. $name .'
+Address: '. $addr .'.
+Phone No.: '. $phone;
 
               /* Finally send the mail. */
               if ($mail->send()) {
