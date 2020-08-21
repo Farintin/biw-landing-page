@@ -1,44 +1,3 @@
-/* 'nav' font choices 
-
-font-family: 'Didact Gothic', sans-serif;
-
-font-family: 'Poppins', sans-serif;
-poppins
-************/
-@import url('https://fonts.googleapis.com/css?family=Didact+Gothic|Josefin+Sans:300,300i,400,400i|Muli:300,300i,400,400i,500,500i|Poppins:300,300i,400,400i,500,500i|Sarabun:300,300i,400,400i,500,500i&display=swap');
-
-
-/* 'header#home main h1 span'=>'Freelabster' font choices
-
-poppins
-**********/
-@import url('https://fonts.googleapis.com/css?family=Arimo|Barlow+Condensed:100,200,300,400,500|Barlow:100,200,300,400,500|Concert+One|Fjalla+One|Karla|Open+Sans+Condensed:300|Quicksand:300,400,500|Rubik:300,400,500&display=swap');
-
-
-
-/* 'header#home main h1'=>'Campus' font choices
-
-poppins
-font-family: 'Montserrat Alternates', sans-serif;
-***********/
-@import url('https://fonts.googleapis.com/css?family=Montserrat+Alternates:600,700,800,900|Pragati+Narrow:400,700|Timmana|Yantramanav:700,900&display=swap');
-
-
-
-/* 'header#home main p'=>'MISSING TEXT HERE' font choices
-
-font-family: 'Poppins', sans-serif;
-***********/
-@import url('https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i&display=swap');
-
-
-/* 'main.one * - .col-1 .para-2' font choices
-
-font-family: 'Poppins', sans-serif;v
-**********/
-@import url('https://fonts.googleapis.com/css?family=Josefin+Sans:100,100i,300,300i,400,400i,600,600i,700,700i|Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i|Questrial&display=swap');
-
-
 
 /* 'main.one .col-1 .para-2' font choices
 
@@ -46,7 +5,6 @@ font-family: 'Lato', sans-serif;
 font-family: 'Nunito', sans-serif;
 ********/
 @import url('https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i|Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&display=swap');
-
 
 
 /* '#events' font choices 
@@ -57,18 +15,6 @@ font-family: 'Pathway Gothic One', sans-serif;
 font-family: 'Bebas Neue', cursive;
 ********/
 @import url('https://fonts.googleapis.com/css?family=Bebas+Neue|Oswald:200,300,400,500,600,700|Pathway+Gothic+One|Teko:300,400,500,600,700&display=swap');
-
-
-
-/* '#events' sub font choices
-
-font-family: 'Roboto', sans-serif;
-font-family: 'Roboto Condensed', sans-serif;
-*********/
-@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap');
-
-
-
 /* 'main#socialPosts section.posts' font choices 
 
 font-family: 'Dosis', sans-serif;
@@ -80,36 +26,11 @@ font-family: 'Big Shoulders Text', cursive;
 ************/
 @import url('https://fonts.googleapis.com/css?family=Bai+Jamjuree:200,200i,300,300i,400,400i,500,500i,600,600i,700,700i|Big+Shoulders+Display:100,300,400,500,600,700,800,900|Big+Shoulders+Text:100,300,400,500,600,700,800,900|Dosis:200,300,400,500,600,700,800|Londrina+Solid:100,300,400,900|Overpass:100,100i,200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&display=swap');
 
-
-
-/* 'footer h4' font choices
-
-font-family: 'Roboto Condensed', sans-serif;-
-font-family: 'Source Sans Pro', sans-serif;-
-font-family: 'Poppins', sans-serif;
-*********/
-@import url('https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i|Roboto+Condensed:300i,400,400i,700,700i|Source+Sans+Pro:300,300i,400,400i,600,600i,700,700i,900,900i&display=swap');
-
-
-
-/* 'footer p' font choices
-
-font-family: 'Oxygen', sans-serif;
-font-family: 'Amiko', sans-serif;
-***********/
-@import url('https://fonts.googleapis.com/css?family=Amiko|Oxygen:300,400&display=swap');
-
-
-
-
-
 /* Poppins font total weight style */ 
 @import url('https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap');
- /* Roboto font total weight style */
-@import url('https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap');
-/* Roboto Condensed total weight style */
-@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i&display=swap');
 
+/* Roboto font total weight style */
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap');
 
 
 
@@ -200,6 +121,7 @@ nav a {
 nav .btn {
 	padding: 8px 0;
 	border: 2px solid #fff;
+    border-radius: 32px;
 	font-weight: 600;
 	margin-left: 16px;
 	transition: 0.3s ease-in;
@@ -550,7 +472,7 @@ main.one section#first .col-2 .form .submit input:hover, main.one section#first 
 #events .main .col-1 .btn {
 	display: inline-block;
     padding: 13px 28px;
-    border-radius: 4px;
+    border-radius: 32px;
     background-color: #8e74e7;
     margin-top: 80px;
     font-size: 18px;
@@ -670,16 +592,17 @@ main.three .header .nav-btn div:first-child {
 }
 main.three section.info:first-child .header .nav-btn div, main.three section.info:last-child .header .nav-btn div {
 	border-width: 2px;
+    border-radius: 32px;
 }
 main.three .header .nav-btn div:hover {
 	background-color: #8e74e7;
 	cursor: pointer;
 }
 main.three .header .nav-btn div.left {
-	border-radius: 4px 0 0 4px;
+    border-radius: 32px 0 0 32px;
 }
 main.three .header .nav-btn div.right {
-	border-radius: 0 4px 4px 0;
+    border-radius: 0 32px 32px 0;
 }
 
 main.three .header .nav-btn div img {
@@ -835,7 +758,7 @@ main.three .main .col-3 .info {
 main.three .main .col-3 .btn {
 	display: inline-block;
 	padding: 12px 28px;
-	border-radius: 4px;
+    border-radius: 32px;
 	background-color: #8e74e7;
 	font-size: 18px;
 	font-family: 'Oswald', sans-serif;
@@ -1031,7 +954,7 @@ main.social-media .preview-info .col-3 {
 }
 main.social-media .preview-info .col-3 .btn {
 	display: inline-block;
-	border-radius: 4px;
+    border-radius: 32px;
 	background-color: #8e74e7;
 	font-size: 18px;
 	font-family: 'Oswald', sans-serif;
@@ -1125,10 +1048,10 @@ main.social-media .nav-btn div {
     align-items: center;
 }
 main.social-media .nav-btn div.prev {
-	border-radius: 4px 0 0 4px;
+    border-radius: 32px 0 0 32px;
 }
 main.social-media .nav-btn div.next {
-	border-radius: 0 4px 4px 0;
+	border-radius: 0 32px 32px 0;
 }
 main.social-media .nav-btn div:first-child {
 	border-right-width: 0;
@@ -1181,7 +1104,7 @@ main.social-media .nav-btn div img {
     margin: 36px 0;
     font-size: 17px;
     color: #9074e6;
-    border-radius: 4px;
+    border-radius: 64px;
     font-weight: 600;
     font-family: 'Roboto', sans-serif;
 }

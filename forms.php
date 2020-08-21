@@ -8,10 +8,10 @@
 
 
   require_once ('./vendor/autoload.php');
-  //use Dotenv\Dotenv;
+  use Dotenv\Dotenv;
 
-  //$dotenv = Dotenv::createImmutable(__DIR__);
-  //$dotenv->load();
+  $dotenv = Dotenv::createImmutable(__DIR__);
+  $dotenv->load();
 
 
   $my_email_addr = getenv('EMAIL');
@@ -51,25 +51,18 @@
         if (isset($_POST['action'])) {
 
           if (getenv('DB_TECHNOLOGY') == 'mysql') {
-
             if (getenv('ENVIRONMENT') == 'development') {
-                      
               $conn = new mysqli('localhost', 'root', '', 'biw-landing-page');
 
             } elseif (getenv('ENVIRONMENT') == 'production') {
-              
               $conn = new mysqli(getenv('MYSQL_HOST'), getenv('MYSQL_USERNAME'), getenv('MYSQL_PASSWORD'), getenv('MYSQL_DB_NAME'));
 
             };
-
           } elseif (getenv('DB_TECHNOLOGY') == 'postgresql') {
-                    
             if (getenv('ENVIRONMENT') == 'development') {
-              
               //echo $password;
               $conn = pg_connect('host=localhost dbname=biw-landing-page user=postgres password=' .getenv('PGSQL_PASSWORD')) or die("Could not connect");
               echo "Connected successfully";
-
             } elseif (getenv('ENVIRONMENT') == 'production') {
               
               $conn = pg_connect(getenv("DATABASE_URL")) or die("Could not connect");
